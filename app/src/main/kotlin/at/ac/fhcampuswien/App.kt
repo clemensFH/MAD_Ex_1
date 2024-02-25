@@ -6,7 +6,19 @@ package at.ac.fhcampuswien
 class App {
     // Game logic for a number guessing game
     fun playNumberGame(digitsToGuess: Int = 4) {
-        //TODO: build a menu which calls the functions and works with the return values
+        var input = 0
+        val number = generateRandomNonRepeatingNumber(digitsToGuess)
+        //println(number)
+
+        while (true){
+            input = readln().toInt()
+            val res = checkUserInputAgainstGeneratedNumber(input, number)
+            println(res.toString())
+            if (res.m == digitsToGuess && res.n == digitsToGuess){
+                println("Correct guess!")
+                return
+            }
+        }
     }
 
     /**
@@ -24,8 +36,17 @@ class App {
      * @throws IllegalArgumentException if the length is more than 9 or less than 1.
      */
     val generateRandomNonRepeatingNumber: (Int) -> Int = { length ->
-        //TODO implement the function
-        0   // return value is a placeholder
+        if (length > 9 || length < 1) {
+            throw IllegalArgumentException()
+        }
+
+        val digits = mutableListOf("1", "2", "3", "4", "5", "6", "7", "8", "9")
+        var number : String = ""
+        while (number.length < length) {
+            val idx = (0 until digits.size).random()
+            number += digits.removeAt(idx)
+        }
+        number.toInt()
     }
 
     /**
@@ -45,12 +66,40 @@ class App {
      * @throws IllegalArgumentException if the inputs do not have the same number of digits.
      */
     val checkUserInputAgainstGeneratedNumber: (Int, Int) -> CompareResult = { input, generatedNumber ->
-        //TODO implement the function
-        CompareResult(0, 0)   // return value is a placeholder
+        val i = input.toString()
+        val g = generatedNumber.toString()
+
+        if (i.length != g.length){
+            throw IllegalArgumentException()
+        }
+
+        var n = 0
+        var m = 0
+
+
+        for (idx in g.indices){
+            if (g.contains(i[idx])){
+                n++
+                if(idx > 0){
+                    if(i.slice(0 until idx).contains(i[idx])){
+                        n--
+                    }
+                }
+            }
+
+            if (g[idx] == i[idx]){
+                m++
+            }
+        }
+
+
+        CompareResult(n, m)   // return value is a placeholder
     }
 }
 
 fun main() {
     println("Hello World!")
     // TODO: call the App.playNumberGame function with and without default arguments
+    val app = App()
+    println(app.playNumberGame())
 }
